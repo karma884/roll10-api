@@ -32,4 +32,5 @@ app.post("/newmessages", (req, res) => {
   res.json({ comment: comment + " <- your message received!" });
 });
 
-app.listen(5000, () => console.log(`we are listening to 5000`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`we are listening to ${PORT}`));
