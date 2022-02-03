@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-
 app.use(express.json());
 app.use(cors());
 
@@ -10,7 +9,9 @@ const MongoClient = require("mongodb").MongoClient;
 const url = "mongodb://localhost:27017/roll10db";
 let db;
 
-MongoClient.connect(url, function (err, database) {
+const MONGODB_URI = process.env.MONGODB_URI || url;
+
+MongoClient.connect(MONGODB_URI, function (err, database) {
   if (err) throw err;
   db = database.db("roll10db");
 });
