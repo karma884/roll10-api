@@ -22,6 +22,7 @@ app.get("/entries", async (req, res) => {
   let historicalRollsDb = await db
     .collection("historicalRolls")
     .find({})
+    .sort({ _id: -1 })
     .toArray();
   res.json(historicalRollsDb);
 });
