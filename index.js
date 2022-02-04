@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const ObjectId = require("mongodb").ObjectId;
 
 const app = express();
 app.use(express.json());
@@ -27,6 +28,14 @@ app.get("/entries", async (req, res) => {
   res.json(historicalRollsDb);
 });
 
+app.delete("/entries", async (req, res) => {
+  console.log("we are deleting the whole database!");
+  const deleteObject = await db
+    .collection(req.body.collectionToDelete)
+    .deleteMany({});
+  res.json(deleteObject);
+});
+
 app.post("/entries", async (req, res) => {
   console.log("we got a new entry!");
   entry = req.body;
@@ -40,18 +49,19 @@ app.post("/entries", async (req, res) => {
   res.json(insertedEntry);
 });
 
-app.post("/newmessages", (req, res) => {
+app.post("/newcomment", async (req, res) => {
   console.log("we got a request to edit a comment!");
-  const { comment, id } = req.body;
-  db.collection("historicalRolls").updateOne(
-    { _id: id },
-    { comment },
-    function (err, res) {
-      if (err) throw err;
-      console.log("1 document updated");
-    }
-  );
-  res.json({ comment: comment + " <- your message received!" });
+  const { comment, _id } = req.body;
+
+  await db
+    .collection("historicalRolls")
+    .updateOne({ _id: ObjectId(_id) }, { $set: { comment } });
+
+  let insertedCommentEntry = await db
+    .collection("historicalRolls")
+    .findOne({ _id: ObjectId(_id) });
+
+  res.json(insertedCommentEntry);
 });
 
 const PORT = process.env.PORT || 5000;
