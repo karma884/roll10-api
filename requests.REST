@@ -1,0 +1,30 @@
+GET http://localhost:5000/users
+
+
+###
+
+
+POST http://localhost:5000/users
+Content-Type: application/json
+
+{
+    "name": "Marju",
+    "email": "marju@gmail.com",
+    "password":"ilikeBerry"
+}
+
+###
+
+POST http://localhost:5000/users/login
+Content-Type: application/json
+
+{
+    "email": "marju@gmail.com",
+    "password":"ilikeBerry"
+}
+
+###
+
+GET http://localhost:5000/entries
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcmp1QGdtYWlsLmNvbSIsImlhdCI6MTY0NDA1NzMyOCwiZXhwIjoxNjQ0MDU3Mzg4fQ.M6qGXNZoavCvRn88E5K7Kh_fCVKWNEPFjb7t7AsALPw

@@ -1,12 +1,16 @@
 const express = require("express");
 const cors = require("cors");
 const ObjectId = require("mongodb").ObjectId;
+require("dotenv").config();
+const { authRoutes } = require("./routes/auth.js");
+const { authenticateToken } = require("./middlewares.js");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 const MongoClient = require("mongodb").MongoClient;
+const { JsonWebTokenError } = require("jsonwebtoken");
 const url = "mongodb://localhost:27017/roll10db";
 let db;
 
@@ -17,16 +21,35 @@ MongoClient.connect(MONGODB_URI, function (err, database) {
   db = database.db("roll10db");
 });
 
-app.get("/entries", async (req, res) => {
-  console.log("we got a request to see historicalRolls!");
+const users = [
+  {
+    name: "Ray2",
+    password: "$2b$10$ZNxZEuSs47xTlWTSEm7MJeo.8iqyWdKuaeWdoTsQHOBLVdgcF3zNq",
+    unhashedpw: "passw0rd2",
+  },
+  {
+    email: "ray.hirsh@gmail.com",
+    name: "Ray",
+    password: "$2b$10$VTehN/5rnIcNIJW9JCobNOvfGzcHMKBMvQaA96iG6LT3Tm5DrSegC",
+    unhashedpw: "passw0rd",
+  },
+];
+authRoutes(app, users);
 
-  let historicalRollsDb = await db
-    .collection("historicalRolls")
-    .find({})
-    .sort({ _id: -1 })
-    .toArray();
-  res.json(historicalRollsDb);
-});
+app.get(
+  "/entries",
+  (req, res, next) => authenticateToken(req, res, next, users),
+  async (req, res) => {
+    console.log("we got a request to see historicalRolls!");
+    console.log(req.user);
+    let historicalRollsDb = await db
+      .collection("historicalRolls")
+      .find({})
+      .sort({ _id: -1 })
+      .toArray();
+    res.json(historicalRollsDb);
+  }
+);
 
 app.delete("/entries", async (req, res) => {
   console.log("we are deleting the whole database!");
