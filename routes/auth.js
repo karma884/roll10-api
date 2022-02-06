@@ -1,22 +1,11 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { Users } = require("../Users");
 
-function authRoutes(app, users) {
+function authRoutes(app, user) {
   app.post("/users", async (req, res) => {
     console.log("adding a user");
-    try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
-      const user = {
-        email: req.body.email,
-        name: req.body.name,
-        password: hashedPassword,
-        unhashedpw: req.body.password,
-      };
-      users.push(user);
-      res.status(263).send();
-    } catch {
-      res.status(566).send();
-    }
+    res.send(user.create(req.body));
   });
 
   app.post("/users/login", async (req, res) => {
