@@ -19,8 +19,8 @@ const MONGODB_URI = process.env.MONGODB_URI || url;
 async function setUp() {
   let db = await MongoClient.connect(MONGODB_URI);
   db = db.db("roll10db");
-  const user = new User(db.collection("users"));
-  authRoutes(app, user);
+  const users = new Users(db.collection("users"));
+  authRoutes(app, users);
 
   app.get(
     "/entries",
